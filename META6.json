@@ -1,7 +1,7 @@
 {
   "name": "App::TAP2Codewars",
   "description": "Transforms piped TAP to Codewars output",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "provides": {
     "App::TAP2Codewars": "lib/App/TAP2Codewars.rakumod"
