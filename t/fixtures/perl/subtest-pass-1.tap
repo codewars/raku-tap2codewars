@@ -1,0 +1,5 @@
+# Subtest: tests
+    ok 1
+    1..1
+ok 1 - tests
+1..1

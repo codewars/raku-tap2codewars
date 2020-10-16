@@ -1,0 +1,6 @@
+not ok 1
+#   Failed test at t/tests.t line 6.
+#          got: '0'
+#     expected: '2'
+1..1
+# Looks like you failed 1 test of 1.

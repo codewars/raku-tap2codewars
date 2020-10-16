@@ -10,7 +10,7 @@ sub MAIN() is export(:MAIN) {
 }
 
 # Output the test result in Codewars format based on the entries from the TAP parser.
-sub report(Supply $entries) {
+sub report(Supply $entries) is export(:testing) {
     react {
         enum State <Normal AfterTestFailure AfterSubTestFailure>;
         my State $state = Normal;
@@ -81,10 +81,12 @@ sub report(Supply $entries) {
             # Not using `.comment` to avoid losing the leading spaces.
             my $content = $comment.raw.subst("# ");
             # Skip some redundant comments
+            return if $state == Normal && $content ~~ /:s ^^Subtest: .+$$/;
             return if $content ~~ /:s ^^You failed \d+ tests? of \d+$$/;
-            return if $content ~~ /:s ^^Failed test at .+ line \d+$$/;
-            return if $content ~~ /:s ^^Failed test \'.+$$/;
-            return if $content ~~ /:s ^^at .+ line \d+$$/;
+            return if $content ~~ /:s ^^Looks like you failed \d+ tests? of \d+\.$$/;
+            return if $content ~~ /:s ^^\s*Failed test at .+ line \d+\.?$$/;
+            return if $content ~~ /:s ^^\s*Failed test \'.+$$/;
+            return if $content ~~ /:s ^^\s*at .+ line \d+\.?$$/;
 
             @buffer.append: $content ~ "\n";
         }
@@ -214,7 +216,7 @@ grammar Grammar {
     }
 }
 
-sub parser(Supply $input --> Supply) {
+sub parser(Supply $input --> Supply) is export(:testing) {
     supply {
         enum Mode <Normal SubTest Yaml >;
         my Mode $mode = Normal;
