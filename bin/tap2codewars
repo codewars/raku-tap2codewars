@@ -1,0 +1,5 @@
+#!/bin/env rakudo
+
+use App::TAP2Codewars :MAIN;
+
+# vim: ft=perl6 sw=4
