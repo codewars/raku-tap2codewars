@@ -1,6 +1,6 @@
 
 <IT::>test 1
 
-<FAILED::>expected: '2'<:LF:>     got: '1'
+<FAILED::>Test Failed<:LF:>expected: '2'<:LF:>     got: '1'
 
 <COMPLETEDIN::>

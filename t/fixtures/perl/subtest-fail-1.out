@@ -3,7 +3,7 @@
 
 <IT::>test 1
 
-<FAILED::>         got: '1'<:LF:>    expected: '2'
+<FAILED::>Test Failed<:LF:>     got: '1'<:LF:>expected: '2'
 
 <COMPLETEDIN::>
 

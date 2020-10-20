@@ -18,8 +18,13 @@ sub report(Supply $entries) is export(:testing) {
 
         sub output-buffered() {
             if ?@buffer {
-                say "\n" ~ @buffer.join.trim-trailing.subst("\n", "<:LF:>", :g);
-                say "\n<COMPLETEDIN::>" if $state == AfterTestFailure;
+                if $state == AfterTestFailure {
+                    # `indent(*)` outdents to the margin (removes common white space)
+                    say "\n<FAILED::>Test Failed<:LF:>{@buffer.join.indent(*).trim-trailing.subst("\n", "<:LF:>", :g)}";
+                    say "\n<COMPLETEDIN::>";
+                } else {
+                    say "\n{@buffer.join.trim-trailing.subst("\n", "<:LF:>", :g)}";
+                }
                 @buffer = ();
             }
             $state = Normal;
@@ -51,7 +56,6 @@ sub report(Supply $entries) is export(:testing) {
                 say "\n<COMPLETEDIN::>";
             } else {
                 $state = AfterTestFailure;
-                @buffer.append: "<FAILED::>";
             }
         }
 
