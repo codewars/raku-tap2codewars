@@ -104,8 +104,7 @@ sub report(Supply $entries) is export(:testing) {
     }
 }
 
-# Rest of this file (Grammar and parser) were copied from TAP because it doesn't export them.
-# We can remove them if we can use `TAP::parser`.
+# Rest of this file (Grammar and parser) were copied and modified from [TAP].
 # [TAP]: https://github.com/Raku/tap-harness6/blob/971df1607ec6e5e1fbf5483272e42f2310b78b16/lib/TAP.pm#L170-L358
 grammar Grammar {
     regex TOP {
@@ -274,7 +273,12 @@ sub parser(Supply $input --> Supply) is export(:testing) {
                     }
                 }
                 else {
-                    emit-unknown $line;
+                    # HACK Emit `Unknown` immediately when inside SubTest
+                    #      to prevent parsing sub-test from failing.
+                    #      This will result in all logs appearing before the test group
+                    #      and it's not ideal, but it's better than unusable output.
+                    emit TAP::Unknown.new(:raw($line));
+                    # emit-unknown $line;
                 }
             }
             elsif $mode == Yaml {
