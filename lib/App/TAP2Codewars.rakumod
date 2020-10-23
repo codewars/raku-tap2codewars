@@ -14,7 +14,10 @@ sub report(Supply $entries) is export(:testing) {
     react {
         enum State <Normal AfterTestFailure AfterSubTestFailure>;
         my State $state = Normal;
+        # For buffering failure diagnostics that comes after test result.
         my Str @buffer;
+        # For buffering logs (unknown lines) that always comes before a test or test group.
+        my Str @logs;
 
         sub output-buffered() {
             if ?@buffer {
@@ -30,6 +33,13 @@ sub report(Supply $entries) is export(:testing) {
             $state = Normal;
         }
 
+        sub output-logs() {
+            if ?@logs {
+                .say for @logs;
+                @logs = ();
+            }
+        }
+
         sub handle-entry(TAP::Entry $entry) {
             given $entry {
                 when TAP::Sub-Test { handle-sub-test($entry) }
@@ -38,7 +48,7 @@ sub report(Supply $entries) is export(:testing) {
                 when TAP::YAML { handle-yaml($entry) }
                 when TAP::Version {}
                 when TAP::Plan { handle-plan($entry) }
-                default { say $entry.raw }
+                default { @logs.append: $entry.raw }
             }
         }
 
@@ -50,6 +60,7 @@ sub report(Supply $entries) is export(:testing) {
             output-buffered();
             my $name = $test.description || "test {$test.number}";
             say "\n<IT::>{$name}";
+            output-logs();
 
             if $test.ok {
                 say "\n<PASSED::>Test Passed";
@@ -63,6 +74,7 @@ sub report(Supply $entries) is export(:testing) {
             output-buffered();
             my $name = $sub-test.description || "tests {$sub-test.number}";
             say "\n<DESCRIBE::>{$name}";
+            output-logs();
 
             for $sub-test.entries -> $entry {
                 handle-entry($entry);
@@ -100,6 +112,7 @@ sub report(Supply $entries) is export(:testing) {
         LEAVE {
             # Output anything left in case of incomplete input.
             output-buffered();
+            output-logs();
         }
     }
 }
