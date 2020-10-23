@@ -1,20 +1,20 @@
-x=1
 
 <IT::>test 1
+x=1
 
 <PASSED::>Test Passed
 
 <COMPLETEDIN::>
-x=1
 
 <IT::>test 2
+x=1
 
 <PASSED::>Test Passed
 
 <COMPLETEDIN::>
-x=1
 
 <IT::>test 3
+x=1
 
 <PASSED::>Test Passed
 
