@@ -10,6 +10,6 @@
   "auth": "github:kazk",
   "authors": ["kazk"],
   "depends": ["TAP:ver<0.1.0+>"],
-  "test-depends": [],
+  "test-depends": ["App::Prove6"],
   "source-url": "https://github.com/codewars/raku-tap2codewars.git"
 }
