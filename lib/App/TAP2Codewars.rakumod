@@ -18,6 +18,8 @@ sub report(Supply $entries) is export(:testing) {
         my Str @buffer;
         # For buffering logs (unknown lines) that always comes before a test or test group.
         my Str @logs;
+        # Flag to output log as error. Used when the type check failed and the test didn't even start.
+        my Bool $error-log = False;
 
         sub output-buffered() {
             if ?@buffer {
@@ -35,8 +37,13 @@ sub report(Supply $entries) is export(:testing) {
 
         sub output-logs() {
             if ?@logs {
-                .say for @logs;
+                if $error-log {
+                    say "\n<ERROR::>{@logs.join("\n").trim-trailing.subst("\n", "<:LF:>", :g)}";
+                } else {
+                    .say for @logs;
+                }
                 @logs = ();
+                $error-log = False;
             }
         }
 
@@ -48,7 +55,12 @@ sub report(Supply $entries) is export(:testing) {
                 when TAP::YAML { handle-yaml($entry) }
                 when TAP::Version {}
                 when TAP::Plan { handle-plan($entry) }
-                default { @logs.append: $entry.raw }
+                default {
+                    if $entry.raw ~~ /:s ^^Type check failed .+$$/ {
+                        $error-log = True;
+                    }
+                    @logs.append: $entry.raw;
+                }
             }
         }
 
@@ -107,12 +119,13 @@ sub report(Supply $entries) is export(:testing) {
             @buffer.append: $content ~ "\n";
         }
 
-        whenever $entries { handle-entry($_) }
-
-        LEAVE {
-            # Output anything left in case of incomplete input.
-            output-buffered();
-            output-logs();
+        whenever $entries {
+            handle-entry($_);
+            LAST {
+                # Output anything left in case of incomplete input.
+                output-buffered();
+                output-logs();
+            }
         }
     }
 }

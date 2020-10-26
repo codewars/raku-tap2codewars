@@ -1,0 +1,2 @@
+
+<ERROR::>Type check failed for return value; expected Array[Str] but got Array (["Friday"])<:LF:>  in sub mostFrequentDays at lib/Solution.rakumod (Solution) line 13<:LF:>  in block <unit> at t/tests.t line 18

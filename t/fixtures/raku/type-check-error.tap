@@ -1,0 +1,3 @@
+Type check failed for return value; expected Array[Str] but got Array (["Friday"])
+  in sub mostFrequentDays at lib/Solution.rakumod (Solution) line 13
+  in block <unit> at t/tests.t line 18
